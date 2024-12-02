@@ -1,52 +1,63 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Signup.css'; // CSS 파일 경로 반영
 
 const Signup = () => {
     const [name, setName] = useState('');
-    const [id, setId] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
-    const navigate = useNavigate();
 
-    const handleSignup = () => {
-        // 회원가입 로직
-        alert('회원가입 완료!');
-        navigate('/login'); // 회원가입 완료 후 로그인 화면으로 이동
+    const handleRegister = async () => {
+        const userData = { name, username, password, phone };
+        try {
+            const response = await fetch('http://13.124.16.188:3000/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData),
+            });
+
+            if (response.ok) {
+                alert('회원가입 성공!');
+                setName('');
+                setUsername('');
+                setPassword('');
+                setPhone('');
+            } else {
+                alert('회원가입 실패. 다시 시도해주세요.');
+            }
+        } catch (error) {
+            console.error('회원가입 중 오류:', error);
+            alert('회원가입 중 문제가 발생했습니다.');
+        }
     };
 
     return (
-        <div className="signup-container">
-            <div className="signup-logo">
-                <img src="/Images/logo.png" alt="Logo" />
-            </div>
-            <div className="signup-form">
-                <input
-                    type="text"
-                    placeholder="이름"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="ID"
-                    value={id}
-                    onChange={(e) => setId(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="PW"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="전화번호"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                />
-                <button onClick={handleSignup}>가입 완료</button>
-            </div>
+        <div>
+            <h1>회원가입</h1>
+            <input
+                type="text"
+                placeholder="이름"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
+            <input
+                type="text"
+                placeholder="아이디"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+                type="password"
+                placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+                type="text"
+                placeholder="전화번호"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+            />
+            <button onClick={handleRegister}>회원가입</button>
         </div>
     );
 };
