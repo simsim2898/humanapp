@@ -1,40 +1,42 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Login.css'; // 필요한 경우 스타일 추가
+import axios from 'axios';
 
 const Login = () => {
-    const [username, setUsername] = useState('');
+    const [id, setId] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
-        const loginData = { username, password };
         try {
-            const response = await fetch('http://13.124.16.188:3000/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(loginData),
+            const response = await axios.post('http://52.78.26.92:3000/login', {
+                user_id: id,
+                password,
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                alert(`로그인 성공! 토큰: ${data.token}`);
-                setUsername('');
-                setPassword('');
+            if (response.status === 200) {
+                const { token } = response.data;
+                alert(`로그인 성공! 토큰: ${token}`);
+                // 로그인 후 필요한 동작 추가 (예: 토큰 저장, 페이지 이동 등)
+                navigate('/dashboard'); // 로그인 성공 후 대시보드로 이동
             } else {
                 alert('로그인 실패. 아이디와 비밀번호를 확인하세요.');
             }
         } catch (error) {
-            console.error('로그인 중 오류:', error);
+            console.error('Login error:', error);
             alert('로그인 중 문제가 발생했습니다.');
         }
     };
 
     return (
-        <div>
+        <div className="login-container">
             <h1>로그인</h1>
             <input
                 type="text"
                 placeholder="아이디"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={id}
+                onChange={(e) => setId(e.target.value)}
             />
             <input
                 type="password"
